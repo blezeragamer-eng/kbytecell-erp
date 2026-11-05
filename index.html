@@ -1,16 +1,359 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>KBYTECELL ERP</title>
-</head>
-<body>
-  <h1>KBYTECELL ERP</h1>
-  <button onclick="novaOS()">+ Nova OS</button>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PDV da Loja</title>
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="PDV">
+<style>
+:root{--bg:#f4f7fb;--sf:#fff;--tx:#17191e;--mt:#64748b;--bd:#dbe3ee;--ac:#102b50;--ct:#fff;--dg:#b42318;--wn:#a15c07;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#11151c;--sf:#1b222d;--tx:#f1f5f9;--mt:#a5b1c2;--bd:#303b4b;--ac:#3b82f6;--ct:#fff;--dg:#ff8a80;--wn:#f2c078}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#11151c;--sf:#1b222d;--tx:#f1f5f9;--mt:#a5b1c2;--bd:#303b4b;--ac:#3b82f6;--ct:#fff;--dg:#ff8a80;--wn:#f2c078}
+html,body{margin:0}*{box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font:15px/1.4 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;min-height:100vh}
+.w{max-width:980px;margin:0 auto;padding:12px}
+header{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+h1{font-size:19px;margin:0;font-weight:700;letter-spacing:-.01em}
+nav{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto}
+nav button{flex:1;white-space:nowrap}
+button,input,select{font:inherit;color:var(--tx)}
+button{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:9px 12px;cursor:pointer}
+button.p{background:var(--ac);color:var(--ct);border-color:var(--ac);font-weight:600}
+button.on{border-color:var(--ac);color:var(--ac);font-weight:600}
+button.d{color:var(--dg)}button:disabled{opacity:.45}
+a.b{display:block;text-align:center;text-decoration:none;background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:9px 12px;color:var(--tx)}
+a.b.p{background:var(--ac);color:var(--ct);border-color:var(--ac);font-weight:600}
+input,select{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:9px;width:100%}
+label{display:block;font-size:13px;color:var(--mt);margin:8px 0 3px}
+.g{display:grid;gap:12px;grid-template-columns:1fr}
+@media(min-width:760px){.g{grid-template-columns:1.2fr 1fr}}
+.c{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:12px}
+.r{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--bd)}
+.r:last-child{border-bottom:0}
+.m{color:var(--mt);font-size:13px}
+.bad{color:var(--dg);font-weight:600}.warn{color:var(--wn);font-weight:600}
+.tot{font-size:26px;font-weight:700;color:var(--ac)}
+.pl{max-height:420px;overflow:auto;margin-top:8px}
+.q{display:flex;align-items:center;gap:6px}.q button{padding:3px 10px}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#md{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:16px;z-index:9}
+#md.s{display:flex}.bx{background:var(--sf);border-radius:12px;padding:16px;width:100%;max-width:420px}
+#rc{font:13px/1.45 "Courier New",monospace;color:#000;background:#fff;padding:12px;border:1px dashed #999;border-radius:6px}
+#rc .l{display:flex;justify-content:space-between;gap:8px}#rc hr{border:0;border-top:1px dashed #000;margin:6px 0}
+@page{size:80mm auto;margin:2mm}
+@media print{
+  html,body{width:80mm!important;min-width:0!important;margin:0!important;padding:0!important;background:#fff!important}
+  body *{visibility:hidden!important}
+  #rc,#rc *{visibility:visible!important}
+  #md,#bx{background:#fff!important;border:0!important;box-shadow:none!important}
+  #rc{position:absolute!important;left:0!important;top:0!important;width:76mm!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;color:#000!important;background:#fff!important;font:13px/1.45 "Courier New",monospace!important}
+}
+#login{position:fixed;inset:0;z-index:20;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
+#login .c{width:100%;max-width:380px}
+#login button{width:100%;margin-top:12px}
+#sync{font-size:11px;color:var(--mt);padding:2px 0}
+</style></head><body><div id="login"><div class="c"><h1>PDV KBYTECELL</h1><p class="m">Entre para acessar o sistema sincronizado.</p><form id="lf"><label>Usuário</label><input id="lu" autocomplete="username" required><label>Senha</label><input id="lp" type="password" autocomplete="current-password" required><button class="p" type="submit">Entrar</button><p id="le" class="m" role="alert"></p></form></div></div><div class="w" style="display:none" id="app">
+<header><h1 id="ttl">PDV</h1><div style="text-align:right"><span class="m" id="hj"></span><div id="sync">Conectando...</div><button onclick="sair()" style="font-size:11px;padding:3px 7px">Sair</button></div></header>
+<nav id="nv"></nav><main id="vw"></main></div>
+<div id="md"><div class="bx" id="bx"></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const brl=n=>(+n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const EMPTY=()=>({cfg:{nome:'Minha Loja',doc:'',end:'',tel:''},prods:[],vendas:[],clientes:[],seq:1});
+let S=EMPTY(),BASE=EMPTY(),REV=0,syncTimer=null,syncBusy=false,syncAgain=false,authenticated=false,pollTimer=null;
+try{const r=localStorage.getItem('pdv1');if(r)S=Object.assign(EMPTY(),JSON.parse(r))}catch(e){}
+function save(){try{localStorage.setItem('pdv1',JSON.stringify(S))}catch(e){} if(authenticated){clearTimeout(syncTimer);syncTimer=setTimeout(()=>{syncTimer=null;syncNow()},450)}}
+let tab='venda',cart=[],busca='',desc=0,pagos=[{m:'Dinheiro',v:0}],cli='';
+const prod=id=>S.prods.find(p=>p.id===id);
+const sub=()=>cart.reduce((a,i)=>{const p=prod(i.id);return a+(p?p.preco*i.q:0)},0);
+const total=()=>Math.max(0,sub()-desc);
+const num=v=>parseFloat(String(v).replace(',','.'))||0;
 
-  <div id="lista"></div>
-
-  <script src="app.js"></script>
-</body>
-</html>
+function setSync(t){const e=$('#sync');if(e)e.textContent=t}
+async function api(path,opts={}){const r=await fetch('/api/'+path,{...opts,headers:{'Content-Type':'application/json',...(opts.headers||{})},credentials:'same-origin'});let j={};try{j=await r.json()}catch(e){}if(!r.ok){const x=new Error(j.error||'Falha na comunicação');x.status=r.status;x.data=j;throw x}return j}
+function same(a,b){return JSON.stringify(a)===JSON.stringify(b)}
+function mergeState(base,local,remote){
+ const out=structuredClone(remote), bm=new Map((base.prods||[]).map(x=>[x.id,x])), lm=new Map((local.prods||[]).map(x=>[x.id,x])), rm=new Map((remote.prods||[]).map(x=>[x.id,x]));
+ for(const id of new Set([...bm.keys(),...lm.keys()])){const b=bm.get(id),l=lm.get(id),r=rm.get(id);if(!b&&l){if(!r)out.prods.push(structuredClone(l));continue}if(b&&!l){if(r&&same(r,b))out.prods=out.prods.filter(x=>x.id!==id);continue}if(b&&l){if(!r){out.prods.push(structuredClone(l));continue}const m={...r};for(const k of new Set([...Object.keys(b),...Object.keys(l)])){if(k==='est'){const delta=(Number(l.est)||0)-(Number(b.est)||0);m.est=(Number(r.est)||0)+delta}else if(!same(l[k],b[k]))m[k]=l[k]}Object.assign(r,m)}}
+ const bcl=new Map((base.clientes||[]).map(x=>[x.id,x])),lcl=new Map((local.clientes||[]).map(x=>[x.id,x])),rcl=new Map((remote.clientes||[]).map(x=>[x.id,x]));
+ for(const id of new Set([...bcl.keys(),...lcl.keys()])){const b=bcl.get(id),l=lcl.get(id),r=rcl.get(id);if(!b&&l){if(!r)out.clientes.push(structuredClone(l));continue}if(b&&!l){if(r&&same(r,b))out.clientes=out.clientes.filter(x=>x.id!==id);continue}if(b&&l){if(!r){out.clientes.push(structuredClone(l));continue}for(const k of Object.keys(l))if(!same(l[k],b[k]))r[k]=l[k]}}
+ const saleKey=v=>String(v.id||('legacy-'+v.n+'-'+v.t));
+ const bv=new Map((base.vendas||[]).map(x=>[saleKey(x),x])),lv=new Map((local.vendas||[]).map(x=>[saleKey(x),x])),rv=new Map((remote.vendas||[]).map(x=>[saleKey(x),x]));
+ for(const [id,v] of lv)if(!bv.has(id)&&!rv.has(id))out.vendas.unshift(structuredClone(v));
+ for(const [id,v] of bv)if(!lv.has(id)&&rv.has(id)&&same(rv.get(id),v))out.vendas=out.vendas.filter(x=>saleKey(x)!==id);
+ // Se duas vendas simultâneas acabarem com o mesmo número de recibo, preserva ambas e renumera uma delas.
+ const used=new Set();let next=Math.max(0,...out.vendas.map(v=>Number(v.n)||0))+1;
+ for(const v of [...out.vendas].sort((a,b)=>(Number(a.t)||0)-(Number(b.t)||0))){if(used.has(String(v.n))){v.n=next++;}used.add(String(v.n));}
+ const bcfg=base.cfg||{},lcfg=local.cfg||{},rcfg=out.cfg||{};for(const k of Object.keys(lcfg))if(!same(lcfg[k],bcfg[k]))rcfg[k]=lcfg[k];out.cfg=rcfg;out.seq=Math.max(Number(local.seq)||1,Number(remote.seq)||1);return out;
+}
+async function loadRemote(){const d=await api('state');REV=d.version||0;const remote=d.state||EMPTY();if(!d.initialized){const local=structuredClone(S);const init=await api('state',{method:'PUT',body:JSON.stringify({version:REV,state:local})});S=init.state;REV=init.version}else{S=remote}BASE=structuredClone(S);try{localStorage.setItem('pdv1',JSON.stringify(S))}catch(e){}}
+async function syncNow(){if(!authenticated)return;if(syncBusy){syncAgain=true;return}syncBusy=true;setSync('Sincronizando...');try{let payload=structuredClone(S);for(let tries=0;tries<4;tries++){try{const d=await api('state',{method:'PUT',body:JSON.stringify({version:REV,state:payload})});REV=d.version;S=d.state;BASE=structuredClone(S);localStorage.setItem('pdv1',JSON.stringify(S));setSync('Sincronizado');break}catch(e){if(e.status!==409||!e.data.state)throw e;const remote=e.data.state;payload=mergeState(BASE,payload,remote);REV=e.data.version;if(tries===3)throw e}}
+ }catch(e){setSync('Falha ao sincronizar · confira a internet');console.error(e);alert('Não foi possível sincronizar com a nuvem. Não feche esta página até recuperar a conexão. Seus dados locais foram preservados neste aparelho.')}finally{syncBusy=false;if(syncAgain){syncAgain=false;syncNow()}}}
+async function pollRemote(){if(!authenticated||syncBusy||syncTimer)return;try{const d=await api('state');if(d.version>REV){S=d.state;BASE=structuredClone(S);REV=d.version;localStorage.setItem('pdv1',JSON.stringify(S));if(!$('#md').classList.contains('s'))render();setSync('Atualizado pela nuvem')}}catch(e){if(e.status===401){authenticated=false;$('#app').style.display='none';$('#login').style.display='flex'}}}
+async function boot(){
+ $('#lf').addEventListener('submit',async e=>{e.preventDefault();const b=$('#lf').querySelector('button');b.disabled=true;$('#le').textContent='Verificando acesso...';try{await api('login',{method:'POST',body:JSON.stringify({user:$('#lu').value.trim(),password:$('#lp').value})});authenticated=true;await loadRemote();$('#login').style.display='none';$('#app').style.display='block';render();setSync('Sincronizado');if(!pollTimer)pollTimer=setInterval(pollRemote,5000)}catch(err){$('#le').textContent=err.message==='Unauthorized'?'Usuário ou senha incorretos.':err.message;authenticated=false}finally{b.disabled=false}});
+ try{await api('session');authenticated=true;await loadRemote();$('#login').style.display='none';$('#app').style.display='block';render();setSync('Sincronizado');if(!pollTimer)pollTimer=setInterval(pollRemote,5000)}catch(e){$('#login').style.display='flex';$('#app').style.display='none'}
+}
+async function sair(){try{await api('logout',{method:'POST',body:'{}'})}catch(e){}authenticated=false;$('#app').style.display='none';$('#login').style.display='flex';$('#lp').value=''}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&authenticated)pollRemote()});
+function render(){
+  $('#ttl').textContent=S.cfg.nome||'PDV';
+  $('#hj').textContent=new Date().toLocaleDateString('pt-BR')+' · v10 nuvem';
+  $('#nv').innerHTML=[['venda','Vender'],['estoque','Estoque'],['hist','Vendas e loja']].map(([k,t])=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';render()">${t}</button>`).join('');
+  $('#vw').innerHTML=tab==='venda'?vVenda():tab==='estoque'?vEstoque():vHist();
+  if(tab==='venda')updTot();
+}
+/* ---------- VENDA ---------- */
+function vVenda(){
+  return `<div class="g"><div class="c"><div class="q"><input id="bs" placeholder="Buscar ou ler código de barras" onkeydown="if(event.key==='Enter')scan()" value="${esc(busca)}" oninput="busca=this.value;$('#pl').innerHTML=plist()"><button onclick="cam()" aria-label="Ler com a câmera">📷</button></div><div class="pl" id="pl">${plist()}</div></div>
+  <div class="c"><b>Carrinho</b><div id="ct">${cartH()}</div>
+  <label>Desconto (R$)</label><input inputmode="decimal" value="${desc||''}" oninput="desc=num(this.value);updTot()">
+  <label>Cliente (opcional)</label><div class="q"><select style="flex:1" onchange="cli=this.value"><option value="">Sem cadastro</option>${S.clientes.map(c=>`<option value="${c.id}" ${c.id===cli?'selected':''}>${esc(c.nome)}</option>`).join('')}</select><button onclick="formCli()">Novo</button></div>
+  <label>Pagamento</label>${pagos.map((p,i)=>`<div class="q" style="margin-bottom:6px"><select style="flex:1" onchange="pagos[${i}].m=this.value">${MP.map(x=>`<option ${x===p.m?'selected':''}>${x}</option>`).join('')}</select><input inputmode="decimal" style="flex:1" placeholder="${pagos.length>1?'Valor':'Valor recebido'}" value="${p.v||''}" oninput="pagos[${i}].v=num(this.value);updTot()">${i?`<button class="d" onclick="pagos.splice(${i},1);render()">×</button>`:''}</div>`).join('')}
+  <button onclick="pagos.push({m:'Pix',v:0});render()">Dividir em mais de uma forma</button>
+  <div class="r"><span class="m">Total</span><span class="tot" id="tt"></span></div>
+  <div class="r"><span class="m" id="tc"></span><span></span></div>
+  <button class="p" style="width:100%;margin-top:6px" onclick="finalizar()">Finalizar venda e emitir recibo</button></div></div>`;
+}
+function plist(){
+  const b=busca.toLowerCase();
+  const l=S.prods.filter(p=>!b||p.nome.toLowerCase().includes(b)||(p.cod||'').toLowerCase().includes(b));
+  if(!S.prods.length)return `<p class="m">Nenhum produto cadastrado. Vá em Estoque para cadastrar o primeiro.</p>`;
+  if(!l.length)return `<p class="m">Nenhum produto encontrado.</p>`;
+  return l.map(p=>`<div class="r"><div><b>${esc(p.nome)}</b><div class="m">${esc(p.cod||'sem código')} · estoque ${p.est}</div></div><button class="p" ${p.est<=0?'disabled':''} onclick="add('${p.id}')">${brl(p.preco)}</button></div>`).join('');
+}
+function cartH(){
+  if(!cart.length)return `<p class="m">Toque em um produto para adicionar.</p>`;
+  return cart.map(i=>{const p=prod(i.id);return `<div class="r"><div><b>${esc(p.nome)}</b><div class="m">${brl(p.preco)} × ${i.q} = ${brl(p.preco*i.q)}</div></div><div class="q"><button onclick="qt('${i.id}',-1)">−</button>${i.q}<button onclick="qt('${i.id}',1)">+</button></div></div>`}).join('');
+}
+function updTot(){
+  const t=total();$('#tt').textContent=brl(t);
+  const el=$('#tc');if(!el)return;
+  const pd=pagos.reduce((a,p)=>a+p.v,0);
+  el.textContent=pd?(pd>=t?(pd>t?'Troco: '+brl(pd-t):'Pagamento completo'):'Faltam '+brl(t-pd)):'';
+}
+function add(id){const p=prod(id),i=cart.find(x=>x.id===id);
+  if((i?i.q:0)+1>p.est){alert('Estoque insuficiente para '+p.nome);return}
+  i?i.q++:cart.push({id,q:1});render()}
+function qt(id,d){const i=cart.find(x=>x.id===id),p=prod(id);
+  if(d>0&&i.q+1>p.est){alert('Estoque insuficiente');return}
+  i.q+=d;if(i.q<=0)cart=cart.filter(x=>x!==i);render()}
+function finalizar(){
+  if(!cart.length){alert('Carrinho vazio');return}
+  const t=total();
+  const pd=pagos.reduce((a,p)=>a+p.v,0);
+  if(pagos.length>1&&pagos.some(p=>!p.v)){alert('Informe o valor de cada forma de pagamento');return}
+  if(pd&&pd<t){alert('Valor pago menor que o total');return}
+  if(pd>t&&!pagos.some(p=>p.m==='Dinheiro')){alert('Só pagamento em dinheiro pode ter troco');return}
+  const ps=pd?pagos.map(p=>({m:p.m,v:p.v})):[{m:pagos[0].m,v:t}];
+  const v={id:(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)),n:Date.now()*100+Math.floor(Math.random()*100),t:Date.now(),cli,pagos:ps,pag:ps.map(p=>p.m).join(' + '),sub:sub(),desc:Math.min(desc,sub()),total:t,
+    itens:cart.map(i=>{const p=prod(i.id);p.est-=i.q;return{nome:p.nome,preco:p.preco,custo:p.custo,q:i.q}})};
+  v.troco=Math.max(0,(pd||t)-t);
+  S.vendas.unshift(v);save();cart=[];desc=0;pagos=[{m:'Dinheiro',v:0}];cli='';render();recibo(v.n);
+}
+/* ---------- RECIBO ---------- */
+function reciboTxt(v){
+  const d=new Date(v.t).toLocaleString('pt-BR');
+  let s=`${S.cfg.nome}\n${[S.cfg.doc,S.cfg.end,S.cfg.tel].filter(Boolean).map(x=>x+'\n').join('')}${d}\nRecibo nº ${String(v.n).padStart(5,'0')}\n--------------------------------\n`;
+  v.itens.forEach(i=>{s+=`${i.nome}\n  ${i.q} x ${brl(i.preco)} = ${brl(i.q*i.preco)}\n`});
+  const ps=v.pagos||[{m:v.pag,v:v.total}],cl=S.clientes.find(c=>c.id===v.cli);
+  s+=`--------------------------------\nSubtotal: ${brl(v.sub)}\n`+(v.desc?`Desconto: -${brl(v.desc)}\n`:'')+`TOTAL: ${brl(v.total)}\n`+ps.map(p=>`${p.m}: ${brl(p.v)}\n`).join('')+(v.troco>0?`Troco: ${brl(v.troco)}\n`:'')+(cl?`Cliente: ${cl.nome}\n`:'')+`--------------------------------\nGARANTIA: 90 DIAS\nGarantia legal conforme o CDC.\nNão cobre danos causados por mau uso, quebras, impactos ou contato com líquidos, quando comprovadamente responsáveis pelo defeito apresentado no acessório.\n--------------------------------\nObrigado pela preferência!\nDocumento sem valor fiscal`;
+  return s;
+}
+function pedeFone(n){
+  const v=S.vendas.find(x=>x.n===n),c=S.clientes.find(x=>x.id===v.cli);
+  const f=prompt('Telefone do cliente com DDD (deixe vazio para escolher o contato depois)',c?c.tel:'');
+  if(f===null)return null;
+  let d=f.replace(/\D/g,'');if(d&&d.length<=11)d='55'+d;return d;
+}
+function abrir(u){const w=window.open(u,'_blank');if(!w)location.href=u}
+function zap(n){
+  const d=pedeFone(n);if(d===null)return;
+  abrir('https://wa.me/'+d+'?text='+encodeURIComponent(reciboTxt(S.vendas.find(x=>x.n===n))));
+}
+function sms(n){
+  const d=pedeFone(n);if(d===null)return;
+  const sep=/iPhone|iPad/.test(navigator.userAgent)?'&':'?';
+  location.href='sms:'+(d?'+'+d:'')+sep+'body='+encodeURIComponent(reciboTxt(S.vendas.find(x=>x.n===n)));
+}
+function img(n){
+  const L=reciboTxt(S.vendas.find(x=>x.n===n)).split('\n').flatMap(l=>l.match(/.{1,32}/g)||['']);
+  const W=384,P=16,H=22,k=2,c=document.createElement('canvas');
+  c.width=W*k;c.height=(L.length*H+P*2)*k;
+  const g=c.getContext('2d');g.scale(k,k);g.fillStyle='#fff';g.fillRect(0,0,W,c.height);
+  g.fillStyle='#000';g.font='15px "Courier New",monospace';
+  L.forEach((l,i)=>g.fillText(l,P,P+H*(i+1)-6));
+  c.toBlob(async b=>{
+    const f=new File([b],'recibo-'+n+'.png',{type:'image/png'});
+    try{
+      if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f]});
+      else alert('Este navegador não compartilha imagem. Use WhatsApp ou SMS em texto.');
+    }catch(e){}
+  },'image/png');
+}
+let RF=null,IMG='';
+async function shareImg(){
+  const box=$('#im');
+  if(IMG)box.innerHTML='<p class="m">Se o menu de compartilhar não abrir, segure o dedo sobre a imagem e escolha Salvar ou Compartilhar. Para imprimir, escolha Imprimir no menu de compartilhar.</p><img src="'+IMG+'" style="width:100%;border:1px solid var(--bd);border-radius:6px">';
+  try{
+    if(RF&&navigator.canShare&&navigator.canShare({files:[RF]}))await navigator.share({files:[RF]});
+  }catch(e){}
+}
+async function shareText(n){
+  const v=S.vendas.find(x=>x.n===n);
+  try{if(navigator.share)await navigator.share({text:reciboTxt(v)});else copiar(n)}catch(e){}
+}
+function imprimir(){
+  // Safari iOS: use the native print sheet from the current user gesture.
+  // The print stylesheet below isolates #rc and formats it for an 80 mm roll.
+  try{
+    window.focus();
+    window.print();
+  }catch(e){
+    alert('Não foi possível abrir a impressão neste navegador. Use Compartilhar texto ou WhatsApp (imagem).');
+  }
+}
+function lnk(n){
+  const v=S.vendas.find(x=>x.n===n);if(!v)return;
+  let d=($('#tf').value||'').replace(/\D/g,'');if(d&&d.length<=11)d='55'+d;
+  const t=encodeURIComponent(reciboTxt(v));
+  $('#lz').href='https://wa.me/'+d+'?text='+t;
+  $('#ls').href='sms:'+(d?'+'+d:'')+'&body='+t;
+}
+function prepImg(n){
+  RF=null;
+  const L=reciboTxt(S.vendas.find(x=>x.n===n)).split('\n').flatMap(l=>l.match(/.{1,32}/g)||['']);
+  const W=384,P=16,H=22,k=2,c=document.createElement('canvas');
+  c.width=W*k;c.height=(L.length*H+P*2)*k;
+  const g=c.getContext('2d');g.scale(k,k);g.fillStyle='#fff';g.fillRect(0,0,W,c.height);
+  g.fillStyle='#000';g.font='15px "Courier New",monospace';
+  L.forEach((l,i)=>g.fillText(l,P,P+H*(i+1)-6));
+  try{IMG=c.toDataURL('image/png')}catch(e){IMG=''}
+  c.toBlob(b=>{if(b)RF=new File([b],'recibo-'+n+'.png',{type:'image/png'})},'image/png');
+}
+async function shareImgOld(){
+  if(!RF){alert('A imagem ainda está sendo preparada. Tente de novo.');return}
+  try{
+    if(navigator.canShare&&navigator.canShare({files:[RF]}))await navigator.share({files:[RF]});
+    else alert('Este navegador não compartilha imagem. Use WhatsApp ou SMS em texto.');
+  }catch(e){}
+}
+function hdr(){const a=[S.cfg.doc,S.cfg.end,S.cfg.tel].filter(Boolean).map(esc);return a.length?a.join('<br>')+'<br>':''}
+function delVenda(n){
+  const v=S.vendas.find(x=>x.n===n);if(!v)return;
+  if(!confirm('Excluir a venda nº '+String(n).padStart(5,'0')+' ('+brl(v.total)+')?'))return;
+  if(confirm('Devolver os itens ao estoque?\nOK = devolver e excluir\nCancelar = excluir sem devolver'))v.itens.forEach(i=>{const p=S.prods.find(x=>x.nome===i.nome);if(p)p.est+=i.q});
+  S.vendas=S.vendas.filter(x=>x.n!==n);save();render();
+}
+function recibo(n){
+  const v=S.vendas.find(x=>x.n===n);if(!v)return;const cl=S.clientes.find(c=>c.id===v.cli);
+  const L=(a,b)=>`<div class="l"><span>${a}</span><span>${b}</span></div>`;
+  $('#bx').innerHTML=`<div id="rc"><div style="text-align:center"><b>${esc(S.cfg.nome)}</b><br>${hdr()}${new Date(v.t).toLocaleString('pt-BR')}<br>Recibo nº ${String(v.n).padStart(5,'0')}</div><hr>
+  ${v.itens.map(i=>`<div>${esc(i.nome)}</div>${L(i.q+' x '+brl(i.preco),brl(i.q*i.preco))}`).join('')}<hr>
+  ${L('Subtotal',brl(v.sub))}${v.desc?L('Desconto','-'+brl(v.desc)):''}${L('<b>TOTAL</b>','<b>'+brl(v.total)+'</b>')}${(v.pagos||[{m:v.pag,v:v.total}]).map(p=>L(esc(p.m),brl(p.v))).join('')}
+  ${v.troco>0?L('Troco',brl(v.troco)):''}${cl?'<div>Cliente: '+esc(cl.nome)+'</div>':''}<hr><div style="font-size:11px;line-height:1.3"><b>GARANTIA: 90 DIAS</b><br>Garantia legal conforme o CDC.<br>Não cobre danos causados por mau uso, quebras, impactos ou contato com líquidos, quando comprovadamente responsáveis pelo defeito apresentado no acessório.</div><hr><div style="text-align:center">Obrigado pela preferência!<br>Documento sem valor fiscal</div></div>
+  <label>Telefone do cliente (com DDD)</label><input id="tf" inputmode="tel" value="${esc(cl?cl.tel:'')}" oninput="lnk(${v.n})"><div class="f2" style="margin-top:10px"><a class="b p" id="lz" href="#">WhatsApp (texto)</a><a class="b p" id="ls" href="#">SMS</a><button onclick="shareText(${v.n})">Compartilhar texto</button><button class="p" onclick="shareImg()">WhatsApp (imagem)</button><button onclick="imprimir()">Imprimir</button><button onclick="copiar(${v.n})">Copiar texto</button></div><div id="im"></div>
+  <button style="width:100%;margin-top:8px" onclick="fechar()">Fechar</button>`;
+  $('#md').classList.add('s');lnk(n);prepImg(n);
+}
+function copiar(n){const v=S.vendas.find(x=>x.n===n);
+  try{navigator.clipboard.writeText(reciboTxt(v)).then(()=>alert('Recibo copiado'),()=>alert('Não foi possível copiar'))}catch(e){alert('Não foi possível copiar')}}
+function fechar(){try{rd&&rd.reset()}catch(e){}rd=null;$('#md').classList.remove('s')}
+/* ---------- ESTOQUE ---------- */
+function vEstoque(){
+  const baixo=S.prods.filter(p=>p.est<=p.min);
+  const val=S.prods.reduce((a,p)=>a+p.est*p.custo,0);
+  return `<div class="c"><div class="r"><div><b>${S.prods.length} produtos</b><div class="m">Valor em estoque (custo): ${brl(val)}</div></div><button class="p" onclick="formProd()">Novo produto</button></div>
+  ${baixo.length?`<div class="warn" style="padding:6px 0">Estoque baixo: ${baixo.map(p=>esc(p.nome)).join(', ')}</div>`:''}
+  ${S.prods.length?S.prods.map(p=>{const mg=p.custo?((p.preco/p.custo-1)*100).toFixed(0)+'%':'—';
+  return `<div class="r"><div><b>${esc(p.nome)}</b><div class="m">${esc(p.cod||'sem código')} · custo ${brl(p.custo)} · venda ${brl(p.preco)} · margem ${mg}</div></div><div style="text-align:right"><div class="${p.est<=p.min?'bad':''}">${p.est} un.</div><button onclick="formProd('${p.id}')">Editar</button></div></div>`}).join(''):'<p class="m">Cadastre seus produtos para começar a vender.</p>'}</div>`;
+}
+function formProd(id){
+  const p=id?prod(id):{nome:'',cod:'',custo:'',preco:'',est:0,min:2};
+  const mg=p.custo&&p.preco?((p.preco/p.custo-1)*100).toFixed(1):'';
+  $('#bx').innerHTML=`<b>${id?'Editar':'Novo'} produto</b>
+  <label>Nome</label><input id="fn" value="${esc(p.nome)}"><label>Código ou código de barras</label><div class="q"><input id="fc" value="${esc(p.cod)}"><button onclick="camForm()" aria-label="Ler com a câmera">📷</button></div><div id="cw"></div>
+  <div class="f2"><div><label>Custo (R$)</label><input id="fk" inputmode="decimal" value="${p.custo}" oninput="calc('k')"></div><div><label>Margem (%)</label><input id="fm" inputmode="decimal" value="${mg}" oninput="calc('m')"></div></div>
+  <label>Preço de venda (R$)</label><input id="fp" inputmode="decimal" value="${p.preco}" oninput="calc('p')">
+  <div class="f2"><div><label>Estoque atual</label><input id="fe" inputmode="numeric" value="${p.est}"></div><div><label>Estoque mínimo</label><input id="fi" inputmode="numeric" value="${p.min}"></div></div>
+  <div class="f2" style="margin-top:12px"><button class="p" onclick="salvaProd('${id||''}')">Salvar</button><button onclick="fechar()">Cancelar</button></div>
+  ${id?`<button class="d" style="width:100%;margin-top:8px" onclick="delProd('${id}')">Excluir produto</button>`:''}`;
+  $('#md').classList.add('s');
+}
+function calc(o){
+  const k=num($('#fk').value),m=num($('#fm').value),p=num($('#fp').value);
+  if(o==='p'){if(k)$('#fm').value=((p/k-1)*100).toFixed(1)}
+  else if(k)$('#fp').value=(k*(1+m/100)).toFixed(2);
+}
+function salvaProd(id){
+  const nome=$('#fn').value.trim();if(!nome){alert('Informe o nome');return}
+  const d={nome,cod:$('#fc').value.trim(),custo:num($('#fk').value),preco:num($('#fp').value),est:Math.round(num($('#fe').value)),min:Math.round(num($('#fi').value))};
+  if(id)Object.assign(prod(id),d);else S.prods.push(Object.assign({id:Date.now().toString(36)},d));
+  save();fechar();render();
+}
+function delProd(id){if(!confirm('Excluir este produto?'))return;S.prods=S.prods.filter(p=>p.id!==id);cart=cart.filter(i=>i.id!==id);save();fechar();render()}
+/* ---------- HISTÓRICO E LOJA ---------- */
+function vHist(){
+  const h=new Date().toDateString(),vs=S.vendas.filter(v=>new Date(v.t).toDateString()===h);
+  const fat=vs.reduce((a,v)=>a+v.total,0),luc=vs.reduce((a,v)=>a+v.itens.reduce((b,i)=>b+(i.preco-i.custo)*i.q,0)-v.desc,0);
+  return `<div class="g"><div class="c"><b>Hoje</b><div class="r"><span class="m">Vendas</span><b>${vs.length}</b></div><div class="r"><span class="m">Faturamento</span><b>${brl(fat)}</b></div><div class="r"><span class="m">Lucro estimado</span><b>${brl(luc)}</b></div>
+  <p style="margin:12px 0 0"><b>Últimas vendas</b></p>${S.vendas.length?S.vendas.slice(0,30).map(v=>`<div class="r"><div><b>Nº ${String(v.n).padStart(5,'0')}</b> · ${brl(v.total)}<div class="m">${new Date(v.t).toLocaleString('pt-BR')} · ${v.pag}</div></div><div class="q"><button onclick="recibo(${v.n})">Recibo</button><button class="d" onclick="delVenda(${v.n})">Excluir</button></div></div>`).join(''):'<p class="m">Nenhuma venda registrada.</p>'}</div>
+  <div class="c"><b>Dados da loja (aparecem no recibo)</b><label>Nome da loja</label><input value="${esc(S.cfg.nome)}" oninput="S.cfg.nome=this.value;save();$('#ttl').textContent=this.value">
+  <label>CNPJ</label><input value="${esc(S.cfg.doc)}" oninput="S.cfg.doc=this.value;save()"><label>Endereço</label><input value="${esc(S.cfg.end||'')}" oninput="S.cfg.end=this.value;save()"><label>Telefone</label><input inputmode="tel" value="${esc(S.cfg.tel||'')}" oninput="S.cfg.tel=this.value;save()">
+  <p class="m">Os dados são sincronizados entre os aparelhos conectados à conta.</p></div>
+  <div class="c"><div class="r"><b>Clientes</b><button class="p" onclick="formCli()">Novo cliente</button></div>${S.clientes.length?S.clientes.map(c=>{const g=S.vendas.filter(v=>v.cli===c.id);return `<div class="r"><div><b>${esc(c.nome)}</b><div class="m">${esc(c.tel||'sem telefone')} · ${g.length} compras · ${brl(g.reduce((a,v)=>a+v.total,0))}</div></div><button onclick="formCli('${c.id}')">Editar</button></div>`}).join(''):'<p class="m">Nenhum cliente cadastrado.</p>'}</div>
+  <div class="c"><b>Backup dos dados</b><p class="m">Copie o backup e guarde em Notas ou WhatsApp. Para restaurar, cole o texto no campo abaixo.</p><div class="f2"><button class="p" onclick="bkp()">Copiar backup</button><button onclick="rest()">Restaurar</button></div><label>Texto do backup</label><textarea id="bk" rows="4" style="width:100%;background:var(--sf);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:8px"></textarea></div></div>`;
+}
+const MP=['Dinheiro','Pix','Cartão débito','Cartão crédito'];
+function scan(){
+  const q=busca.trim().toLowerCase();if(!q)return;
+  let p=S.prods.find(x=>(x.cod||'').toLowerCase()===q);
+  if(!p){const l=S.prods.filter(x=>x.nome.toLowerCase().includes(q));if(l.length===1)p=l[0]}
+  if(!p){alert('Produto não encontrado');return}
+  if(p.est<=0){alert('Sem estoque: '+p.nome);return}
+  busca='';add(p.id);const b=$('#bs');if(b)b.focus();
+}
+function formCli(id){
+  const c=id?S.clientes.find(x=>x.id===id):{nome:'',tel:''};
+  $('#bx').innerHTML=`<b>${id?'Editar':'Novo'} cliente</b><label>Nome</label><input id="cn" value="${esc(c.nome)}"><label>Telefone</label><input id="cf" inputmode="tel" value="${esc(c.tel)}"><div class="f2" style="margin-top:12px"><button class="p" onclick="salvaCli('${id||''}')">Salvar</button><button onclick="fechar()">Cancelar</button></div>`;
+  $('#md').classList.add('s');
+}
+function salvaCli(id){
+  const nome=$('#cn').value.trim();if(!nome){alert('Informe o nome');return}
+  const tel=$('#cf').value.trim();
+  if(id){Object.assign(S.clientes.find(x=>x.id===id),{nome,tel})}
+  else{const n={id:Date.now().toString(36),nome,tel};S.clientes.push(n);if(tab==='venda')cli=n.id}
+  save();fechar();render();
+}
+function bkp(){const t=JSON.stringify(S),a=$('#bk');a.value=t;a.select();
+  try{navigator.clipboard.writeText(t).then(()=>alert('Backup copiado'),()=>alert('Texto selecionado: toque em Copiar'))}catch(e){alert('Texto selecionado: toque em Copiar')}}
+function rest(){let d;try{d=JSON.parse($('#bk').value)}catch(e){alert('Backup inválido');return}
+  if(!d||!Array.isArray(d.prods)){alert('Backup inválido');return}
+  if(!confirm('Isso substitui os dados atuais. Continuar?'))return;
+  S=Object.assign({cfg:{nome:'Minha Loja',doc:''},prods:[],vendas:[],clientes:[],seq:1},d);save();cart=[];render()}
+let rd=null;
+async function cam(){
+  if(!window.ZXing){alert('Leitor de câmera indisponível. Use o campo de busca.');return}
+  $('#bx').innerHTML=`<b>Aponte para o código de barras</b><video id="cv" playsinline muted style="width:100%;border-radius:8px;margin-top:8px"></video><button style="width:100%;margin-top:8px" onclick="stopCam()">Fechar</button>`;
+  $('#md').classList.add('s');
+  try{
+    rd=new ZXing.BrowserMultiFormatReader();
+    await rd.decodeFromConstraints({video:{facingMode:'environment'}},'cv',(r)=>{
+      if(r&&rd){const c=r.getText();stopCam();busca=c;scan()}
+    });
+  }catch(e){stopCam();alert('Não foi possível abrir a câmera. Ela só funciona com o PDV hospedado em um site próprio (https) e com a permissão de câmera liberada.')}
+}
+function stopCam(){try{rd&&rd.reset()}catch(e){}rd=null;fechar()}
+async function camForm(){
+  if(!window.ZXing){alert('Leitor de câmera indisponível. Digite o código.');return}
+  $('#cw').innerHTML='<video id="cv" playsinline muted style="width:100%;border-radius:8px;margin-top:8px"></video><button style="width:100%;margin-top:6px" onclick="stopForm()">Cancelar leitura</button>';
+  try{
+    rd=new ZXing.BrowserMultiFormatReader();
+    await rd.decodeFromConstraints({video:{facingMode:'environment'}},'cv',(r)=>{
+      if(r&&rd){$('#fc').value=r.getText();stopForm()}
+    });
+  }catch(e){stopForm();alert('Não foi possível abrir a câmera. Libere a permissão em Ajustes > Safari > Câmera.')}
+}
+function stopForm(){try{rd&&rd.reset()}catch(e){}rd=null;const w=$('#cw');if(w)w.innerHTML=''}
+boot();
+</script></body></html>

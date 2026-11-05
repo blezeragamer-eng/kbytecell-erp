@@ -1,0 +1,49 @@
+PDV KBYTECELL — sincronização entre iPhones com Cloudflare D1
+VERSÃO 10 — pacote de implantação
+
+O QUE ESTE PACOTE FAZ
+- Usa o Cloudflare D1 como fonte central dos dados.
+- Mantém produtos, estoque, vendas, clientes e dados da loja compartilhados.
+- Envia alterações automaticamente após salvar.
+- Consulta atualizações da nuvem a cada 5 segundos enquanto a página está aberta; ao voltar ao Safari, consulta novamente.
+- Tem login protegido por sessão HttpOnly/Secure/SameSite=Strict.
+- Mantém cache local e backup/restauração manual como proteção adicional.
+
+IMPORTANTE SOBRE “TEMPO REAL”
+A atualização é quase em tempo real, normalmente em até 5 segundos com os dois iPhones conectados à internet e com o PDV aberto em primeiro plano. O iOS pode suspender páginas em segundo plano; ao voltar ao Safari, o PDV consulta a nuvem novamente. Não registre vendas offline esperando sincronização posterior.
+
+ARQUIVOS
+- index.html: tela do PDV com login e sincronização.
+- functions/api/: endpoints protegidos de login, sessão, logout e dados.
+- migrations/0001_init.sql: cria as tabelas necessárias no D1.
+- wrangler.toml: declara o binding DB; substituir o ID de exemplo pelo ID real do D1 antes de usar Wrangler.
+
+SEGURANÇA
+- Configure PDV_USER, PDV_PASSWORD e SESSION_SECRET como Secrets/variáveis secretas do projeto Pages.
+- Use senha forte e exclusiva. Não coloque credenciais no index.html.
+- A sessão expira em 14 dias.
+- A API de dados exige sessão e usa controle de versão para evitar sobrescrita silenciosa quando dois aparelhos salvam ao mesmo tempo.
+- Não compartilhe o login com terceiros.
+
+ATENÇÃO: NÃO É UM UPLOAD HTML SIMPLES
+Este projeto usa Cloudflare Pages Functions (a pasta /functions). O upload por arrastar e soltar no painel do Pages não publica a pasta /functions. A implantação precisa ser feita por GitHub conectado ao Pages ou pelo Wrangler em um computador. A documentação oficial da Cloudflare confirma essa limitação.
+
+PASSOS DE CONFIGURAÇÃO
+1. Confirme que existe um projeto Cloudflare Pages (não apenas um banco D1 isolado).
+2. Publique a pasta deste projeto por GitHub conectado ao Pages ou usando Wrangler.
+3. No projeto Pages, em Settings > Bindings, adicione/edite D1 Database com Variable name exatamente DB e selecione o banco correto. Salve e faça novo deploy; o binding só passa a valer após a implantação.
+4. No banco D1, abra Console e execute todo o conteúdo de migrations/0001_init.sql. Isso cria pdv_state e login_attempts. Não execute em outro banco por engano.
+5. No projeto Pages, em Settings > Variables and Secrets, configure:
+   - PDV_USER: nome de usuário escolhido por você.
+   - PDV_PASSWORD: senha forte escolhida por você.
+   - SESSION_SECRET: sequência aleatória longa, exclusiva e diferente da senha.
+   Configure para Production (e Preview apenas se for usar Preview).
+6. Faça novo deploy após configurar binding e secrets.
+7. Abra a URL publicada no primeiro iPhone e entre. Se houver dados locais salvos nessa mesma origem, eles serão enviados ao banco na primeira inicialização. Se os dados estão no arquivo HTML antigo ou em outra origem, use a opção “Copiar backup” no PDV antigo e depois “Restaurar” no novo PDV antes de começar a cadastrar/vender. Faça isso somente na primeira inicialização do banco vazio.
+8. Entre no segundo iPhone com o mesmo usuário e senha. Cadastre um produto de teste no primeiro e confira no segundo. Faça uma venda fictícia e confira o histórico/estoque. Apague os dados fictícios antes de operar.
+
+CUIDADO COM OS DADOS EXISTENTES
+Não apague nem substitua o PDV antigo ainda. Faça um backup completo antes da migração. O primeiro acesso ao banco vazio pode importar automaticamente o cache local do navegador que fizer o primeiro login; depois disso, o D1 passa a ser a fonte central.
+
+OBSERVAÇÃO
+O pacote não foi implantado nem validado dentro da sua conta Cloudflare. A implantação, criação das tabelas e configuração dos secrets ainda precisam ser concluídas e testadas nos dois aparelhos antes do uso real.
