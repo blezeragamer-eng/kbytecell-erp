@@ -138,8 +138,8 @@ function add(id){const p=prod(id),i=cart.find(x=>x.id===id);
 function qt(id,d){const i=cart.find(x=>x.id===id),p=prod(id);
   if(d>0&&i.q+1>p.est){alert('Estoque insuficiente');return}
   i.q+=d;if(i.q<=0)cart=cart.filter(x=>x!==i);render()}
-function finalizar(){
-  let saleBusy = false;
+  
+let saleBusy = false;
 let pendingSale = null;
 
 async function finalizar(){
