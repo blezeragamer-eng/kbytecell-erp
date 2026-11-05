@@ -265,7 +265,7 @@ async function finalizar(){
 /* ---------- RECIBO ---------- */
 function reciboTxt(v){
   const d=new Date(v.t).toLocaleString('pt-BR');
-  let s=`${S.cfg.nome}\n${[S.cfg.doc,S.cfg.end,S.cfg.tel].filter(Boolean).map(x=>x+'\n').join('')}${d}\nRecibo nº ${String(v.n).padStart(5,'0')}\n--------------------------------\n`;
+  let s=`${S.cfg.nome}\n${[S.cfg.doc,S.cfg.end,S.cfg.tel].filter(Boolean).map(x=>x+'\n').join('')}${d}\nRecibo nº ${String(v.n).padStart(3,'0')}\n--------------------------------\n`;
   v.itens.forEach(i=>{s+=`${i.nome}\n  ${i.q} x ${brl(i.preco)} = ${brl(i.q*i.preco)}\n`});
   const ps=v.pagos||[{m:v.pag,v:v.total}],cl=S.clientes.find(c=>c.id===v.cli);
   s+=`--------------------------------\nSubtotal: ${brl(v.sub)}\n`+(v.desc?`Desconto: -${brl(v.desc)}\n`:'')+`TOTAL: ${brl(v.total)}\n`+ps.map(p=>`${p.m}: ${brl(p.v)}\n`).join('')+(v.troco>0?`Troco: ${brl(v.troco)}\n`:'')+(cl?`Cliente: ${cl.nome}\n`:'')+`--------------------------------\nGARANTIA: 90 DIAS\nGarantia legal conforme o CDC.\nNão cobre danos causados por mau uso, quebras, impactos ou contato com líquidos, quando comprovadamente responsáveis pelo defeito apresentado no acessório.\n--------------------------------\nObrigado pela preferência!\nDocumento sem valor fiscal`;
