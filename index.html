@@ -352,14 +352,14 @@ async function shareImgOld(){
 function hdr(){const a=[S.cfg.doc,S.cfg.end,S.cfg.tel].filter(Boolean).map(esc);return a.length?a.join('<br>')+'<br>':''}
 function delVenda(n){
   const v=S.vendas.find(x=>x.n===n);if(!v)return;
-  if(!confirm('Excluir a venda nº '+String(n).padStart(5,'0')+' ('+brl(v.total)+')?'))return;
+  if(!confirm('Excluir a venda nº '+String(n).padStart(3,'0')+' ('+brl(v.total)+')?'))return;
   if(confirm('Devolver os itens ao estoque?\nOK = devolver e excluir\nCancelar = excluir sem devolver'))v.itens.forEach(i=>{const p=S.prods.find(x=>x.nome===i.nome);if(p)p.est+=i.q});
   S.vendas=S.vendas.filter(x=>x.n!==n);save();render();
 }
 function recibo(n){
   const v=S.vendas.find(x=>x.n===n);if(!v)return;const cl=S.clientes.find(c=>c.id===v.cli);
   const L=(a,b)=>`<div class="l"><span>${a}</span><span>${b}</span></div>`;
-  $('#bx').innerHTML=`<div id="rc"><div style="text-align:center"><b>${esc(S.cfg.nome)}</b><br>${hdr()}${new Date(v.t).toLocaleString('pt-BR')}<br>Recibo nº ${String(v.n).padStart(5,'0')}</div><hr>
+  $('#bx').innerHTML=`<div id="rc"><div style="text-align:center"><b>${esc(S.cfg.nome)}</b><br>${hdr()}${new Date(v.t).toLocaleString('pt-BR')}<br>Recibo nº ${String(v.n).padStart(3,'0')}</div><hr>
   ${v.itens.map(i=>`<div>${esc(i.nome)}</div>${L(i.q+' x '+brl(i.preco),brl(i.q*i.preco))}`).join('')}<hr>
   ${L('Subtotal',brl(v.sub))}${v.desc?L('Desconto','-'+brl(v.desc)):''}${L('<b>TOTAL</b>','<b>'+brl(v.total)+'</b>')}${(v.pagos||[{m:v.pag,v:v.total}]).map(p=>L(esc(p.m),brl(p.v))).join('')}
   ${v.troco>0?L('Troco',brl(v.troco)):''}${cl?'<div>Cliente: '+esc(cl.nome)+'</div>':''}<hr><div style="font-size:11px;line-height:1.3"><b>GARANTIA: 90 DIAS</b><br>Garantia legal conforme o CDC.<br>Não cobre danos causados por mau uso, quebras, impactos ou contato com líquidos, quando comprovadamente responsáveis pelo defeito apresentado no acessório.</div><hr><div style="text-align:center">Obrigado pela preferência!<br>Documento sem valor fiscal</div></div>
@@ -408,7 +408,7 @@ function vHist(){
   const h=new Date().toDateString(),vs=S.vendas.filter(v=>new Date(v.t).toDateString()===h);
   const fat=vs.reduce((a,v)=>a+v.total,0),luc=vs.reduce((a,v)=>a+v.itens.reduce((b,i)=>b+(i.preco-i.custo)*i.q,0)-v.desc,0);
   return `<div class="g"><div class="c"><b>Hoje</b><div class="r"><span class="m">Vendas</span><b>${vs.length}</b></div><div class="r"><span class="m">Faturamento</span><b>${brl(fat)}</b></div><div class="r"><span class="m">Lucro estimado</span><b>${brl(luc)}</b></div>
-  <p style="margin:12px 0 0"><b>Últimas vendas</b></p>${S.vendas.length?S.vendas.slice(0,30).map(v=>`<div class="r"><div><b>Nº ${String(v.n).padStart(5,'0')}</b> · ${brl(v.total)}<div class="m">${new Date(v.t).toLocaleString('pt-BR')} · ${v.pag}</div></div><div class="q"><button onclick="recibo(${v.n})">Recibo</button><button class="d" onclick="delVenda(${v.n})">Excluir</button></div></div>`).join(''):'<p class="m">Nenhuma venda registrada.</p>'}</div>
+  <p style="margin:12px 0 0"><b>Últimas vendas</b></p>${S.vendas.length?S.vendas.slice(0,30).map(v=>`<div class="r"><div><b>Nº ${String(v.n).padStart(3,'0')}</b> · ${brl(v.total)}<div class="m">${new Date(v.t).toLocaleString('pt-BR')} · ${v.pag}</div></div><div class="q"><button onclick="recibo(${v.n})">Recibo</button><button class="d" onclick="delVenda(${v.n})">Excluir</button></div></div>`).join(''):'<p class="m">Nenhuma venda registrada.</p>'}</div>
   <div class="c"><b>Dados da loja (aparecem no recibo)</b><label>Nome da loja</label><input value="${esc(S.cfg.nome)}" oninput="S.cfg.nome=this.value;save();$('#ttl').textContent=this.value">
   <label>CNPJ</label><input value="${esc(S.cfg.doc)}" oninput="S.cfg.doc=this.value;save()"><label>Endereço</label><input value="${esc(S.cfg.end||'')}" oninput="S.cfg.end=this.value;save()"><label>Telefone</label><input inputmode="tel" value="${esc(S.cfg.tel||'')}" oninput="S.cfg.tel=this.value;save()">
   <p class="m">Os dados são sincronizados entre os aparelhos conectados à conta.</p></div>
