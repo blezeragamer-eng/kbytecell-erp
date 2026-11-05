@@ -139,17 +139,128 @@ function qt(id,d){const i=cart.find(x=>x.id===id),p=prod(id);
   if(d>0&&i.q+1>p.est){alert('Estoque insuficiente');return}
   i.q+=d;if(i.q<=0)cart=cart.filter(x=>x!==i);render()}
 function finalizar(){
+  let saleBusy = false;
+let pendingSale = null;
+
+async function finalizar(){
+  if(saleBusy)return;
   if(!cart.length){alert('Carrinho vazio');return}
+
   const t=total();
   const pd=pagos.reduce((a,p)=>a+p.v,0);
-  if(pagos.length>1&&pagos.some(p=>!p.v)){alert('Informe o valor de cada forma de pagamento');return}
+
+  if(pagos.length>1&&pagos.some(p=>!p.v)){
+    alert('Informe o valor de cada forma de pagamento');return
+  }
   if(pd&&pd<t){alert('Valor pago menor que o total');return}
-  if(pd>t&&!pagos.some(p=>p.m==='Dinheiro')){alert('Só pagamento em dinheiro pode ter troco');return}
+  if(pd>t&&!pagos.some(p=>p.m==='Dinheiro')){
+    alert('Só pagamento em dinheiro pode ter troco');return
+  }
+
   const ps=pd?pagos.map(p=>({m:p.m,v:p.v})):[{m:pagos[0].m,v:t}];
-  const v={id:(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)),n:Date.now()*100+Math.floor(Math.random()*100),t:Date.now(),cli,pagos:ps,pag:ps.map(p=>p.m).join(' + '),sub:sub(),desc:Math.min(desc,sub()),total:t,
-    itens:cart.map(i=>{const p=prod(i.id);p.est-=i.q;return{nome:p.nome,preco:p.preco,custo:p.custo,q:i.q}})};
-  v.troco=Math.max(0,(pd||t)-t);
-  S.vendas.unshift(v);save();cart=[];desc=0;pagos=[{m:'Dinheiro',v:0}];cli='';render();recibo(v.n);
+
+  const request={
+    items:cart.map(i=>({id:i.id,q:i.q})),
+    discount:Math.min(desc,sub()),
+    clientId:cli,
+    payments:ps
+  };
+
+  const signature=JSON.stringify(request);
+
+  if(!pendingSale||pendingSale.signature!==signature){
+    pendingSale={
+      signature,
+      requestId:crypto.randomUUID?crypto.randomUUID():
+        Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)
+    };
+  }
+
+  saleBusy=true;
+  const btn=$('#vw button[onclick="finalizar()"]');
+  if(btn){btn.disabled=true;btn.textContent='Registrando venda...'}
+
+  try{
+    if(syncTimer){
+      clearTimeout(syncTimer);
+      syncTimer=null;
+    }
+
+    if(syncBusy){
+      throw new Error('Aguarde a sincronização terminar e tente novamente.');
+    }
+
+    await syncNow();
+
+    if(!same(S,BASE)){
+      throw new Error('Não foi possível sincronizar os dados. Verifique a conexão e tente novamente.');
+    }
+
+    const d=await api('sale',{
+      method:'POST',
+      body:JSON.stringify({
+        ...request,
+        requestId:pendingSale.requestId
+      })
+    });
+
+    S=d.state;
+    REV=d.version;
+    BASE=structuredClone(S);
+    localStorage.setItem('pdv1',JSON.stringify(S));
+
+    const v=d.sale;
+
+    pendingSale=null;
+    cart=[];
+    desc=0;
+    pagos=[{m:'Dinheiro',v:0}];
+    cli='';
+
+    render();
+    setSync('Sincronizado');
+    recibo(v.n);
+
+  }catch(e){
+    if(e.data?.state){
+      S=e.data.state;
+      REV=e.data.version;
+      BASE=structuredClone(S);
+      localStorage.setItem('pdv1',JSON.stringify(S));
+      render();
+      pendingSale=null;
+    }else{
+      try{
+        const latest=await api('state');
+        S=latest.state;
+        REV=latest.version;
+        BASE=structuredClone(S);
+        localStorage.setItem('pdv1',JSON.stringify(S));
+
+        const saved=S.vendas.find(v=>v.id===pendingSale?.requestId);
+
+        if(saved){
+          pendingSale=null;
+          cart=[];
+          desc=0;
+          pagos=[{m:'Dinheiro',v:0}];
+          cli='';
+          render();
+          setSync('Sincronizado');
+          recibo(saved.n);
+          return;
+        }
+
+        render();
+      }catch(err){}
+    }
+
+    alert(e.message||'Não foi possível registrar a venda.');
+  }finally{
+    saleBusy=false;
+    const b=$('#vw button[onclick="finalizar()"]');
+    if(b){b.disabled=false;b.textContent='Finalizar venda e emitir recibo'}
+  }
 }
 /* ---------- RECIBO ---------- */
 function reciboTxt(v){
