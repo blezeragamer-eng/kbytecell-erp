@@ -65,6 +65,7 @@ try{const r=localStorage.getItem('pdv1');if(r)S=Object.assign(EMPTY(),JSON.parse
 function save(){try{localStorage.setItem('pdv1',JSON.stringify(S))}catch(e){} if(authenticated){clearTimeout(syncTimer);syncTimer=setTimeout(()=>{syncTimer=null;syncNow()},450)}}
 let tab='venda',cart=[],busca='',desc=0,pagos=[{m:'Dinheiro',v:0}],cli='';
 let buscaEstoque='';
+let relatorioModo='mes',relatorioData='',relatorioMes='',relatorioInicio='',relatorioFim='';
 const prod=id=>S.prods.find(p=>p.id===id);
 const sub=()=>cart.reduce((a,i)=>{const p=prod(i.id);return a+(p?p.preco*i.q:0)},0);
 const total=()=>Math.max(0,sub()-desc);
@@ -411,12 +412,76 @@ function salvaProd(id){
 }
 function delProd(id){if(!confirm('Excluir este produto?'))return;S.prods=S.prods.filter(p=>p.id!==id);cart=cart.filter(i=>i.id!==id);save();fechar();render()}
 /* ---------- HISTÓRICO E LOJA ---------- */
+function isoLocal(d){
+  return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+}
+function lerDataISO(s){
+  if(!s)return null;
+  const p=s.split('-').map(Number);
+  return p.length===3?new Date(p[0],p[1]-1,p[2]):null;
+}
 function vHist(){
-  const h=new Date().toDateString(),vs=S.vendas.filter(v=>new Date(v.t).toDateString()===h);
-  const fat=vs.reduce((a,v)=>a+v.total,0),luc=vs.reduce((a,v)=>a+v.itens.reduce((b,i)=>b+(i.preco-i.custo)*i.q,0)-v.desc,0);
-  return `<div class="g"><div class="c"><b>Hoje</b><div class="r"><span class="m">Vendas</span><b>${vs.length}</b></div><div class="r"><span class="m">Faturamento</span><b>${brl(fat)}</b></div><div class="r"><span class="m">Lucro estimado</span><b>${brl(luc)}</b></div>
-  <p style="margin:12px 0 0"><b>Últimas vendas</b></p>${S.vendas.length?S.vendas.slice(0,30).map(v=>`<div class="r"><div><b>Nº ${String(v.n).padStart(3,'0')}</b> · ${brl(v.total)}<div class="m">${new Date(v.t).toLocaleString('pt-BR')} · ${v.pag}</div></div><div class="q"><button onclick="recibo(${v.n})">Recibo</button><button class="d" onclick="delVenda(${v.n})">Excluir</button></div></div>`).join(''):'<p class="m">Nenhuma venda registrada.</p>'}</div>
-  <div class="c"><b>Dados da loja (aparecem no recibo)</b><label>Nome da loja</label><input value="${esc(S.cfg.nome)}" oninput="S.cfg.nome=this.value;save();$('#ttl').textContent=this.value">
+  const hoje=isoLocal(new Date());
+  if(!relatorioData)relatorioData=hoje;
+  if(!relatorioMes)relatorioMes=hoje.slice(0,7);
+  if(!relatorioInicio)relatorioInicio=hoje;
+  if(!relatorioFim)relatorioFim=hoje;
+
+  let ini,fim,titulo;
+  if(relatorioModo==='hoje'){
+    ini=lerDataISO(hoje);fim=new Date(ini);fim.setDate(fim.getDate()+1);titulo='Hoje';
+  }else if(relatorioModo==='semana'){
+    const ref=lerDataISO(relatorioData)||lerDataISO(hoje);
+    ini=new Date(ref);ini.setDate(ini.getDate()-(ini.getDay()+6)%7);
+    fim=new Date(ini);fim.setDate(fim.getDate()+7);titulo='Semana de '+ini.toLocaleDateString('pt-BR');
+  }else if(relatorioModo==='periodo'){
+    ini=lerDataISO(relatorioInicio);const fimDia=lerDataISO(relatorioFim);
+    fim=fimDia?new Date(fimDia):null;if(fim)fim.setDate(fim.getDate()+1);
+    titulo='Período personalizado';
+  }else{
+    const p=relatorioMes.split('-').map(Number);
+    ini=p.length===2?new Date(p[0],p[1]-1,1):lerDataISO(hoje);
+    fim=new Date(ini);fim.setMonth(fim.getMonth()+1);
+    titulo=ini.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  }
+  const intervaloValido=ini&&fim&&fim>ini;
+  const vendas=intervaloValido?S.vendas.filter(v=>{const d=new Date(v.t);return !isNaN(d.getTime())&&d>=ini&&d<fim}).sort((a,b)=>Number(b.t)-Number(a.t)):[];
+  const soma=arr=>{
+    const qtd=arr.length;
+    const subtotal=arr.reduce((a,v)=>a+(Number(v.sub)||v.itens.reduce((x,i)=>x+(Number(i.preco)||0)*(Number(i.q)||0),0)),0);
+    const descontos=arr.reduce((a,v)=>a+(Number(v.desc)||0),0);
+    const faturamento=arr.reduce((a,v)=>a+(Number(v.total)||0),0);
+    const custo=arr.reduce((a,v)=>a+(v.itens||[]).reduce((x,i)=>x+(Number(i.custo)||0)*(Number(i.q)||0),0),0);
+    return {qtd,subtotal,descontos,faturamento,custo,lucro:faturamento-custo,medio:qtd?faturamento/qtd:0};
+  };
+  const r=soma(vendas);
+  const grupos=new Map();
+  vendas.forEach(v=>{const k=isoLocal(new Date(v.t));if(!grupos.has(k))grupos.set(k,[]);grupos.get(k).push(v)});
+  const dias=[...grupos.entries()].map(([k,arr])=>{
+    const d=lerDataISO(k),z=soma(arr);
+    const itens=arr.map(v=>`<div class="r"><div><b>Nº ${String(v.n).padStart(3,'0')}</b> · ${brl(v.total)}<div class="m">${new Date(v.t).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})} · ${esc(v.pag||'')}</div></div><div class="q"><button onclick="recibo(${v.n})">Recibo</button><button class="d" onclick="delVenda(${v.n})">Excluir</button></div></div>`).join('');
+    return `<details style="border-bottom:1px solid var(--bd);padding:5px 0"><summary style="cursor:pointer;padding:7px 0"><b>${d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'})}</b><div class="m">${z.qtd} venda(s) · ${brl(z.faturamento)} vendido · lucro bruto ${brl(z.lucro)}</div></summary>${itens}</details>`;
+  }).join('');
+
+  return `<div class="c"><b>Relatórios de vendas</b><p class="m">Consulte o movimento por dia, semana, mês ou intervalo de datas.</p>
+  <label>Tipo de consulta</label><select value="${relatorioModo}" onchange="relatorioModo=this.value;render()"><option value="hoje" ${relatorioModo==='hoje'?'selected':''}>Hoje</option><option value="semana" ${relatorioModo==='semana'?'selected':''}>Semana</option><option value="mes" ${relatorioModo==='mes'?'selected':''}>Mês</option><option value="periodo" ${relatorioModo==='periodo'?'selected':''}>Período personalizado</option></select>
+  ${relatorioModo==='semana'?'<label>Escolha um dia da semana desejada</label><input type="date" value="'+relatorioData+'" onchange="relatorioData=this.value;render()">':''}
+  ${relatorioModo==='mes'?'<label>Mês do relatório</label><input type="month" value="'+relatorioMes+'" onchange="relatorioMes=this.value;render()">':''}
+  ${relatorioModo==='periodo'?'<div class="f2"><div><label>Data inicial</label><input type="date" value="'+relatorioInicio+'" onchange="relatorioInicio=this.value;render()"></div><div><label>Data final</label><input type="date" value="'+relatorioFim+'" onchange="relatorioFim=this.value;render()"></div></div>':''}
+  <p class="m">Exibindo: <b>${esc(titulo)}</b></p>
+  <div class="f2">
+    <div><div class="m">Quantidade de vendas</div><b>${r.qtd}</b></div>
+    <div><div class="m">Total vendido</div><b>${brl(r.faturamento)}</b></div>
+    <div><div class="m">Custo dos produtos</div><b>${brl(r.custo)}</b></div>
+    <div><div class="m">Lucro bruto estimado</div><b>${brl(r.lucro)}</b></div>
+    <div><div class="m">Descontos concedidos</div><b>${brl(r.descontos)}</b></div>
+    <div><div class="m">Ticket médio</div><b>${brl(r.medio)}</b></div>
+  </div>
+  <p class="m" style="margin-top:8px">O lucro bruto considera o valor vendido menos o custo cadastrado dos produtos e não desconta despesas fixas, taxas de cartão ou outros custos da loja.</p>
+  <div class="r"><b>Vendas separadas por dia</b><span class="m">${vendas.length} registro(s)</span></div>
+  ${!intervaloValido?'<p class="m">Informe um intervalo de datas válido.</p>':dias||'<p class="m">Nenhuma venda encontrada neste período.</p>'}
+  </div>
+  <div class="g"><div class="c"><b>Dados da loja (aparecem no recibo)</b><label>Nome da loja</label><input value="${esc(S.cfg.nome)}" oninput="S.cfg.nome=this.value;save();$('#ttl').textContent=this.value">
   <label>CNPJ</label><input value="${esc(S.cfg.doc)}" oninput="S.cfg.doc=this.value;save()"><label>Endereço</label><input value="${esc(S.cfg.end||'')}" oninput="S.cfg.end=this.value;save()"><label>Telefone</label><input inputmode="tel" value="${esc(S.cfg.tel||'')}" oninput="S.cfg.tel=this.value;save()">
   <p class="m">Os dados são sincronizados entre os aparelhos conectados à conta.</p></div>
   <div class="c"><div class="r"><b>Clientes</b><button class="p" onclick="formCli()">Novo cliente</button></div>${S.clientes.length?S.clientes.map(c=>{const g=S.vendas.filter(v=>v.cli===c.id);return `<div class="r"><div><b>${esc(c.nome)}</b><div class="m">${esc(c.tel||'sem telefone')} · ${g.length} compras · ${brl(g.reduce((a,v)=>a+v.total,0))}</div></div><button onclick="formCli('${c.id}')">Editar</button></div>`}).join(''):'<p class="m">Nenhum cliente cadastrado.</p>'}</div>
