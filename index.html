@@ -64,6 +64,7 @@ let S=EMPTY(),BASE=EMPTY(),REV=0,syncTimer=null,syncBusy=false,syncAgain=false,a
 try{const r=localStorage.getItem('pdv1');if(r)S=Object.assign(EMPTY(),JSON.parse(r))}catch(e){}
 function save(){try{localStorage.setItem('pdv1',JSON.stringify(S))}catch(e){} if(authenticated){clearTimeout(syncTimer);syncTimer=setTimeout(()=>{syncTimer=null;syncNow()},450)}}
 let tab='venda',cart=[],busca='',desc=0,pagos=[{m:'Dinheiro',v:0}],cli='';
+let buscaEstoque='';
 const prod=id=>S.prods.find(p=>p.id===id);
 const sub=()=>cart.reduce((a,i)=>{const p=prod(i.id);return a+(p?p.preco*i.q:0)},0);
 const total=()=>Math.max(0,sub()-desc);
@@ -371,13 +372,19 @@ function copiar(n){const v=S.vendas.find(x=>x.n===n);
   try{navigator.clipboard.writeText(reciboTxt(v)).then(()=>alert('Recibo copiado'),()=>alert('Não foi possível copiar'))}catch(e){alert('Não foi possível copiar')}}
 function fechar(){try{rd&&rd.reset()}catch(e){}rd=null;$('#md').classList.remove('s')}
 /* ---------- ESTOQUE ---------- */
+function listaEstoque(){
+  const q=buscaEstoque.trim().toLocaleLowerCase();
+  const lista=S.prods.filter(p=>(p.nome||'').toLocaleLowerCase().includes(q)||(p.cod||'').toLocaleLowerCase().includes(q));
+  return lista.length?lista.map(p=>{const mg=p.custo?((p.preco/p.custo-1)*100).toFixed(0)+'%':'—';
+  return `<div class="r"><div><b>${esc(p.nome)}</b><div class="m">${esc(p.cod||'sem código')} · custo ${brl(p.custo)} · venda ${brl(p.preco)} · margem ${mg}</div></div><div style="text-align:right"><div class="${p.est<=p.min?'bad':''}">${p.est} un.</div><button onclick="formProd('${p.id}')">Editar</button></div></div>`}).join(''):'<p class="m">${S.prods.length?'Nenhum produto encontrado.':'Cadastre seus produtos para começar a vender.'}</p>';
+}
 function vEstoque(){
   const baixo=S.prods.filter(p=>p.est<=p.min);
   const val=S.prods.reduce((a,p)=>a+p.est*p.custo,0);
   return `<div class="c"><div class="r"><div><b>${S.prods.length} produtos</b><div class="m">Valor em estoque (custo): ${brl(val)}</div></div><button class="p" onclick="formProd()">Novo produto</button></div>
   ${baixo.length?`<div class="warn" style="padding:6px 0">Estoque baixo: ${baixo.map(p=>esc(p.nome)).join(', ')}</div>`:''}
-  ${S.prods.length?S.prods.map(p=>{const mg=p.custo?((p.preco/p.custo-1)*100).toFixed(0)+'%':'—';
-  return `<div class="r"><div><b>${esc(p.nome)}</b><div class="m">${esc(p.cod||'sem código')} · custo ${brl(p.custo)} · venda ${brl(p.preco)} · margem ${mg}</div></div><div style="text-align:right"><div class="${p.est<=p.min?'bad':''}">${p.est} un.</div><button onclick="formProd('${p.id}')">Editar</button></div></div>`}).join(''):'<p class="m">Cadastre seus produtos para começar a vender.</p>'}</div>`;
+  <div class="q" style="margin:10px 0"><input id="be" placeholder="Pesquisar por nome ou código de barras" value="${esc(buscaEstoque)}" oninput="buscaEstoque=this.value;$('#ep').innerHTML=listaEstoque()"><button onclick="camEstoque()" aria-label="Ler código de barras com a câmera">📷</button></div>
+  <div id="ep">${listaEstoque()}</div></div>`;
 }
 function formProd(id){
   const p=id?prod(id):{nome:'',cod:'',custo:'',preco:'',est:0,min:2};
@@ -443,6 +450,17 @@ function rest(){let d;try{d=JSON.parse($('#bk').value)}catch(e){alert('Backup in
   if(!confirm('Isso substitui os dados atuais. Continuar?'))return;
   S=Object.assign({cfg:{nome:'Minha Loja',doc:''},prods:[],vendas:[],clientes:[],seq:1},d);save();cart=[];render()}
 let rd=null;
+async function camEstoque(){
+  if(!window.ZXing){alert('Leitor de câmera indisponível. Pesquise pelo nome ou digite o código de barras.');return}
+  $('#bx').innerHTML=`<b>Aponte para o código de barras do produto</b><video id="cv" playsinline muted style="width:100%;border-radius:8px;margin-top:8px"></video><button style="width:100%;margin-top:8px" onclick="stopCam()">Cancelar leitura</button>`;
+  $('#md').classList.add('s');
+  try{
+    rd=new ZXing.BrowserMultiFormatReader();
+    await rd.decodeFromConstraints({video:{facingMode:'environment'}},'cv',(r)=>{
+      if(r&&rd){buscaEstoque=r.getText();stopCam();render()}
+    });
+  }catch(e){stopCam();alert('Não foi possível abrir a câmera. Libere a permissão de câmera do navegador e tente novamente.')}
+}
 async function cam(){
   if(!window.ZXing){alert('Leitor de câmera indisponível. Use o campo de busca.');return}
   $('#bx').innerHTML=`<b>Aponte para o código de barras</b><video id="cv" playsinline muted style="width:100%;border-radius:8px;margin-top:8px"></video><button style="width:100%;margin-top:8px" onclick="stopCam()">Fechar</button>`;
