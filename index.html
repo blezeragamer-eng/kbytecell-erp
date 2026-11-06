@@ -376,7 +376,7 @@ function listaEstoque(){
   const q=buscaEstoque.trim().toLocaleLowerCase();
   const lista=S.prods.filter(p=>(p.nome||'').toLocaleLowerCase().includes(q)||(p.cod||'').toLocaleLowerCase().includes(q));
   return lista.length?lista.map(p=>{const mg=p.custo?((p.preco/p.custo-1)*100).toFixed(0)+'%':'—';
-  return `<div class="r"><div><b>${esc(p.nome)}</b><div class="m">${esc(p.cod||'sem código')} · custo ${brl(p.custo)} · venda ${brl(p.preco)} · margem ${mg}</div></div><div style="text-align:right"><div class="${p.est<=p.min?'bad':''}">${p.est} un.</div><button onclick="formProd('${p.id}')">Editar</button></div></div>`}).join(''):'<p class="m">${S.prods.length?'Nenhum produto encontrado.':'Cadastre seus produtos para começar a vender.'}</p>';
+  return `<div class="r"><div><b>${esc(p.nome)}</b><div class="m">${esc(p.cod||'sem código')} · custo ${brl(p.custo)} · venda ${brl(p.preco)} · margem ${mg}</div></div><div style="text-align:right"><div class="${p.est<=p.min?'bad':''}">${p.est} un.</div><button onclick="formProd('${p.id}')">Editar</button></div></div>`}).join(''):`<p class="m">${S.prods.length?'Nenhum produto encontrado.':'Cadastre seus produtos para começar a vender.'}</p>`;
 }
 function vEstoque(){
   const baixo=S.prods.filter(p=>p.est<=p.min);
