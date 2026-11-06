@@ -448,7 +448,7 @@ function vHist(){
   const vendas=intervaloValido?S.vendas.filter(v=>{const d=new Date(v.t);return !isNaN(d.getTime())&&d>=ini&&d<fim}).sort((a,b)=>Number(b.t)-Number(a.t)):[];
   const soma=arr=>{
     const qtd=arr.length;
-    const subtotal=arr.reduce((a,v)=>a+(Number(v.sub)||v.itens.reduce((x,i)=>x+(Number(i.preco)||0)*(Number(i.q)||0),0)),0);
+    const subtotal=arr.reduce((a,v)=>a+(Number(v.sub)||((v.itens||[]).reduce((x,i)=>x+(Number(i.preco)||0)*(Number(i.q)||0),0))),0);
     const descontos=arr.reduce((a,v)=>a+(Number(v.desc)||0),0);
     const faturamento=arr.reduce((a,v)=>a+(Number(v.total)||0),0);
     const custo=arr.reduce((a,v)=>a+(v.itens||[]).reduce((x,i)=>x+(Number(i.custo)||0)*(Number(i.q)||0),0),0);
