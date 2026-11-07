@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>PDV da Loja</title>
+<title>KBYTECELL · Gestão de Acessórios</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;650;700;750;800&display=swap" rel="stylesheet">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="PDV">
 <style>
 :root{--bg:#f4f7fb;--sf:#fff;--tx:#17191e;--mt:#64748b;--bd:#dbe3ee;--ac:#102b50;--ct:#fff;--dg:#b42318;--wn:#a15c07;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -104,11 +107,11 @@ details summary:after{content:"＋";float:right;color:var(--mt);font-weight:700}
 }
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1523;--sf:#151f30;--tx:#eef3fa;--mt:#9ba9bd;--bd:#2b394d;--ac:#91a9ce;--ct:#101a2a;--dg:#ff858a;--wn:#e4b66d;--shadow:0 8px 28px rgba(0,0,0,.18);--shadow-sm:0 2px 10px rgba(0,0,0,.14)}}
 :root[data-theme="dark"]{--bg:#0d1523;--sf:#151f30;--tx:#eef3fa;--mt:#9ba9bd;--bd:#2b394d;--ac:#91a9ce;--ct:#101a2a;--dg:#ff858a;--wn:#e4b66d}
-body{background:var(--bg);font-family:Inter,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;letter-spacing:-.015em}
+body{background:var(--bg);font-family:"Manrope",-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;letter-spacing:-.02em;font-feature-settings:"ss01" on}
 #app.w{display:grid!important;grid-template-columns:218px minmax(0,1fr);grid-template-rows:auto 1fr;gap:0 24px;max-width:1440px;min-height:100vh;padding:22px 28px 30px}
 header{grid-column:1/-1;background:#142541;color:#fff;border-radius:17px;padding:17px 22px;min-height:82px;margin:0 0 22px;box-shadow:0 8px 24px rgba(16,34,62,.12);border:1px solid rgba(255,255,255,.06)}
-header:before{content:"KBYTECELL  /  PAINEL DE GESTÃO";top:9px;left:22px;color:#b9c7dc;font-size:9px;letter-spacing:.19em}
-header h1{padding-top:13px;color:#fff;font-size:22px;font-weight:720;letter-spacing:-.045em}
+header:before{content:"GESTÃO DE ACESSÓRIOS";top:9px;left:22px;color:#c5d2e5;font-size:9px;letter-spacing:.22em;font-weight:800}
+header h1{padding-top:13px;color:#fff;font-family:"Manrope",sans-serif;font-size:23px;font-weight:800;letter-spacing:-.055em}
 header .m,header #sync{color:#d4deed}header button{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);color:#fff}
 #sync{font-size:10px;letter-spacing:.02em}
 nav{grid-column:1;grid-row:2;display:flex;flex-direction:column;align-items:stretch;gap:6px;margin:0;padding:12px 10px;height:max-content;min-height:220px;background:#142541;border:1px solid #203653;border-radius:16px;box-shadow:0 8px 22px rgba(16,34,62,.10)}
@@ -146,8 +149,8 @@ label{font-size:11px;font-weight:700;letter-spacing:.045em;text-transform:upperc
 @media(max-width:760px){
  #app.w{display:block!important;min-height:100vh;padding:12px 12px 24px}
  header{min-height:76px;padding:14px 15px;border-radius:14px;margin-bottom:12px}
- header:before{left:15px;top:7px;font-size:8px}
- header h1{font-size:19px;padding-top:12px}
+ header:before{left:15px;top:7px;font-size:8px;letter-spacing:.19em}
+ header h1{font-size:20px;padding-top:12px}
  nav{display:flex;flex-direction:row;grid-column:auto;grid-row:auto;min-height:0;height:auto;gap:5px;margin:0 0 13px;padding:5px;border-radius:12px;background:#142541;border-color:#203653;overflow-x:auto;scrollbar-width:none}
  nav::-webkit-scrollbar{display:none}
  nav:before{display:none}
@@ -167,6 +170,14 @@ label{font-size:11px;font-weight:700;letter-spacing:.045em;text-transform:upperc
  #vw{display:block!important}
 }
 
+
+/* ---------- TIPOGRAFIA REFINADA ---------- */
+body,button,input,select{font-family:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+h1,.c>b,.c>div>b,.bx>b{font-family:"Manrope",sans-serif;font-weight:750;letter-spacing:-.035em}
+button{font-weight:700;letter-spacing:-.015em}
+input,select{font-weight:550;letter-spacing:-.01em}
+label{font-weight:800;letter-spacing:.075em}
+@media(max-width:760px){header h1{font-size:19px}}
 </style></head><body><div id="login"><div class="c"><h1>PDV KBYTECELL</h1><p class="m">Entre para acessar o sistema sincronizado.</p><form id="lf"><label>Usuário</label><input id="lu" autocomplete="username" required><label>Senha</label><input id="lp" type="password" autocomplete="current-password" required><button class="p" type="submit">Entrar</button><p id="le" class="m" role="alert"></p></form></div></div><div class="w" style="display:none" id="app">
 <header><h1 id="ttl">PDV</h1><div style="text-align:right"><span class="m" id="hj"></span><div id="sync">Conectando...</div><button onclick="sair()" style="font-size:11px;padding:3px 7px">Sair</button></div></header>
 <nav id="nv"></nav><main id="vw"></main></div>
