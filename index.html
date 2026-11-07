@@ -58,8 +58,8 @@ label{display:block;font-size:13px;color:var(--mt);margin:8px 0 3px}
 body{font-family:Inter,"SF Pro Display",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:-.012em;background:var(--bg)}
 .w{max-width:1180px;padding:22px 24px 40px}
 header{position:relative;background:linear-gradient(115deg,#102746 0%,#173e70 58%,#155eef 100%);color:#fff;padding:19px 22px;border-radius:20px;margin:0 0 18px;box-shadow:0 12px 30px rgba(16,55,105,.17);min-height:86px}
-header:before{content:"KBYTECELL  /  GESTÃO DA LOJA";display:block;font-size:10px;letter-spacing:.16em;font-weight:800;color:#b9d4ff;margin-bottom:4px}
-header h1{font-size:23px;line-height:1.15;font-weight:750;letter-spacing:-.04em;color:#fff}
+header:before{content:"KBYTECELL  /  GESTÃO DA LOJA";position:absolute;top:10px;left:22px;display:block;font-size:10px;letter-spacing:.16em;font-weight:800;color:#b9d4ff;margin:0}
+header h1{font-size:23px;line-height:1.15;font-weight:750;letter-spacing:-.04em;color:#fff;padding-top:12px}
 header .m,header #sync{color:#d5e4fa}header button{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);color:#fff;border-radius:9px}#sync{font-size:11px;font-weight:650}
 nav{gap:8px;margin:0 0 18px;padding:5px;background:var(--sf);border:1px solid var(--bd);border-radius:14px;box-shadow:var(--shadow-sm)}
 nav button{flex:0 0 auto;border:0;background:transparent;border-radius:10px;padding:11px 18px;font-size:13px;font-weight:650;color:var(--mt);transition:background .18s,color .18s,transform .18s}
@@ -90,7 +90,7 @@ details summary:after{content:"＋";float:right;color:var(--mt);font-weight:700}
 #login .c h1{font-size:25px;letter-spacing:-.045em;color:var(--tx)}#login .c h1:before{content:"";display:block;width:38px;height:5px;border-radius:8px;background:var(--ac);margin-bottom:17px}
 #login .c p{margin:8px 0 18px}#login button{min-height:46px;border-radius:11px}#login label{margin-top:14px}#login input{min-height:46px}
 .warn{background:color-mix(in srgb,var(--wn) 10%,transparent);border:1px solid color-mix(in srgb,var(--wn) 25%,var(--bd));border-radius:10px;padding:10px!important}.bad{color:var(--dg)}
-@media(max-width:759px){.w{padding:12px 12px 26px}header{padding:15px 16px;border-radius:16px;min-height:78px;margin-bottom:12px}header h1{font-size:20px}nav{margin-bottom:12px;overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}nav button{padding:10px 15px}.g{grid-template-columns:minmax(0,1fr);gap:12px}.c{padding:15px;border-radius:15px}.pl{max-height:340px}.tot{font-size:27px}#md{padding:10px;align-items:flex-start}.bx{margin:auto 0;padding:18px;border-radius:17px}}
+@media(max-width:759px){.w{padding:12px 12px 26px}header{padding:15px 16px;border-radius:16px;min-height:78px;margin-bottom:12px}header:before{left:16px;top:8px}header h1{font-size:20px;padding-top:12px}nav{margin-bottom:12px;overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}nav button{padding:10px 15px}.g{grid-template-columns:minmax(0,1fr);gap:12px}.c{padding:15px;border-radius:15px}.pl{max-height:340px}.tot{font-size:27px}#md{padding:10px;align-items:flex-start}.bx{margin:auto 0;padding:18px;border-radius:17px}}
 @media(min-width:760px){#vw{animation:pdv-in .22s ease-out}}
 @keyframes pdv-in{from{opacity:.72;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 @media print{body{background:#fff!important}header,nav,#login{display:none!important}.w{max-width:none!important;padding:0!important}#md,#bx{background:#fff!important;box-shadow:none!important}}
