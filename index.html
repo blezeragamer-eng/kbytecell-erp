@@ -95,6 +95,78 @@ details summary:after{content:"＋";float:right;color:var(--mt);font-weight:700}
 @keyframes pdv-in{from{opacity:.72;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 @media print{body{background:#fff!important}header,nav,#login{display:none!important}.w{max-width:none!important;padding:0!important}#md,#bx{background:#fff!important;box-shadow:none!important}}
 
+
+/* ---------- TEMA MARINHO + BRANCO | KBYTECELL ---------- */
+:root{
+ --bg:#f5f7fb;--sf:#fff;--tx:#17243a;--mt:#78869b;--bd:#e5eaf1;
+ --ac:#172b4d;--ct:#fff;--dg:#c53b43;--wn:#a86a18;
+ --shadow:0 8px 28px rgba(20,38,66,.055);--shadow-sm:0 2px 10px rgba(20,38,66,.04)
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1523;--sf:#151f30;--tx:#eef3fa;--mt:#9ba9bd;--bd:#2b394d;--ac:#91a9ce;--ct:#101a2a;--dg:#ff858a;--wn:#e4b66d;--shadow:0 8px 28px rgba(0,0,0,.18);--shadow-sm:0 2px 10px rgba(0,0,0,.14)}}
+:root[data-theme="dark"]{--bg:#0d1523;--sf:#151f30;--tx:#eef3fa;--mt:#9ba9bd;--bd:#2b394d;--ac:#91a9ce;--ct:#101a2a;--dg:#ff858a;--wn:#e4b66d}
+body{background:var(--bg);font-family:Inter,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;letter-spacing:-.015em}
+#app.w{display:grid!important;grid-template-columns:218px minmax(0,1fr);grid-template-rows:auto 1fr;gap:0 24px;max-width:1440px;min-height:100vh;padding:22px 28px 30px}
+header{grid-column:1/-1;background:#142541;color:#fff;border-radius:17px;padding:17px 22px;min-height:82px;margin:0 0 22px;box-shadow:0 8px 24px rgba(16,34,62,.12);border:1px solid rgba(255,255,255,.06)}
+header:before{content:"KBYTECELL  /  PAINEL DE GESTÃO";top:9px;left:22px;color:#b9c7dc;font-size:9px;letter-spacing:.19em}
+header h1{padding-top:13px;color:#fff;font-size:22px;font-weight:720;letter-spacing:-.045em}
+header .m,header #sync{color:#d4deed}header button{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);color:#fff}
+#sync{font-size:10px;letter-spacing:.02em}
+nav{grid-column:1;grid-row:2;display:flex;flex-direction:column;align-items:stretch;gap:6px;margin:0;padding:12px 10px;height:max-content;min-height:220px;background:#142541;border:1px solid #203653;border-radius:16px;box-shadow:0 8px 22px rgba(16,34,62,.10)}
+nav:before{content:"MENU PRINCIPAL";display:block;padding:5px 10px 11px;color:#9eafc8;font-size:9px;font-weight:800;letter-spacing:.16em}
+nav button{flex:0 0 auto;width:100%;text-align:left;border:0;border-radius:10px;background:transparent;color:#c5d0e0;padding:12px 13px;font-size:13px;font-weight:620}
+nav button:before{display:inline-block;width:24px;color:#a9bad2;font-size:15px}
+nav button:nth-of-type(1):before{content:"▣"}nav button:nth-of-type(2):before{content:"▤"}nav button:nth-of-type(3):before{content:"▥"}
+nav button.on{background:#fff;color:#172b4d;box-shadow:0 3px 10px rgba(0,0,0,.10)}
+nav button.on:before{color:#172b4d}
+nav button:hover{background:rgba(255,255,255,.09);transform:translateX(2px)}
+nav button.on:hover{background:#fff}
+#vw{grid-column:2;grid-row:2;min-width:0;animation:pdv-in .2s ease-out}
+.c{background:var(--sf);border:1px solid var(--bd);border-radius:15px;padding:19px;box-shadow:var(--shadow-sm)}
+.c>b,.c>div>b{font-size:14px;font-weight:720;color:var(--tx)}
+.r{padding:12px 2px;border-color:var(--bd)}
+.m{color:var(--mt);font-size:12px}
+button,input,select{font-family:inherit}
+button{border-radius:9px;font-size:12px;font-weight:650}
+button.p{background:#172b4d;border-color:#172b4d;color:#fff;box-shadow:0 3px 9px rgba(23,43,77,.13)}
+button.p:hover{background:#223b63;border-color:#223b63;filter:none}
+button.on{background:#172b4d;color:#fff;border-color:#172b4d}
+button:not(.p):hover{border-color:#9aabc2}
+input,select{border-radius:9px;background:var(--sf);border-color:var(--bd);min-height:42px;font-size:13px}
+input:focus,select:focus{border-color:#7189ad;box-shadow:0 0 0 3px rgba(75,101,143,.12)}
+label{font-size:11px;font-weight:700;letter-spacing:.045em;text-transform:uppercase;color:var(--mt)}
+.tot{color:var(--ac);font-size:29px}
+.pl{max-height:calc(100vh - 300px)}
+#md{background:rgba(8,17,31,.62);backdrop-filter:blur(7px)}
+.bx{border-radius:17px}
+#login{background:radial-gradient(ellipse at 50% 0,rgba(23,43,77,.09),transparent 52%),var(--bg)}
+#login .c{border-radius:18px;box-shadow:0 16px 50px rgba(17,36,65,.09);padding:30px}
+#login .c h1{font-size:24px;letter-spacing:-.05em}
+#login .c h1:before{background:#172b4d}
+#login button{background:#172b4d;border-color:#172b4d}
+@media(max-width:760px){
+ #app.w{display:block!important;min-height:100vh;padding:12px 12px 24px}
+ header{min-height:76px;padding:14px 15px;border-radius:14px;margin-bottom:12px}
+ header:before{left:15px;top:7px;font-size:8px}
+ header h1{font-size:19px;padding-top:12px}
+ nav{display:flex;flex-direction:row;grid-column:auto;grid-row:auto;min-height:0;height:auto;gap:5px;margin:0 0 13px;padding:5px;border-radius:12px;background:#142541;border-color:#203653;overflow-x:auto;scrollbar-width:none}
+ nav::-webkit-scrollbar{display:none}
+ nav:before{display:none}
+ nav button{width:auto;flex:1 0 auto;text-align:center;padding:10px 11px;font-size:11px;white-space:nowrap}
+ nav button:before{width:auto;margin-right:6px;font-size:12px}
+ nav button:hover{transform:none}
+ #vw{min-width:0}
+ .g{grid-template-columns:minmax(0,1fr);gap:11px}
+ .c{padding:15px;border-radius:13px}
+ .pl{max-height:340px}
+ #md{padding:10px;align-items:flex-start}
+ .bx{margin:auto 0;padding:18px;border-radius:15px}
+}
+@media print{
+ #app.w{display:block!important;min-height:0!important;padding:0!important}
+ header,nav{display:none!important}
+ #vw{display:block!important}
+}
+
 </style></head><body><div id="login"><div class="c"><h1>PDV KBYTECELL</h1><p class="m">Entre para acessar o sistema sincronizado.</p><form id="lf"><label>Usuário</label><input id="lu" autocomplete="username" required><label>Senha</label><input id="lp" type="password" autocomplete="current-password" required><button class="p" type="submit">Entrar</button><p id="le" class="m" role="alert"></p></form></div></div><div class="w" style="display:none" id="app">
 <header><h1 id="ttl">PDV</h1><div style="text-align:right"><span class="m" id="hj"></span><div id="sync">Conectando...</div><button onclick="sair()" style="font-size:11px;padding:3px 7px">Sair</button></div></header>
 <nav id="nv"></nav><main id="vw"></main></div>
